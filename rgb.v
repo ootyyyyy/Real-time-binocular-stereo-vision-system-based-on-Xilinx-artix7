@@ -2,23 +2,25 @@
 //--------------------------------------------------------------------------------------------
 
 
-module RGB(Din_l, Din_r, Nblank, R, G, B);
-   input [3:0]  Din_l;
-   input [3:0]  Din_r;
+module RGB(Din, Din_avg, Nblank, R, G, B, avg_en);
+   input [7:0]  Din;
+   input [3:0]  Din_avg;
    input        Nblank;
    output [7:0] R;
    output [7:0] G;
    output [7:0] B;
+   input        avg_en;
    
+   wire [7:0]   vga_out;
    
-   wire [7:0]   Gray;
-   assign Gray = ((({Din_r[3:0], Din_r[3:0]}) + ({Din_l[3:0], Din_l[3:0]}))/2);
-   assign R = (Nblank == 1'b1) ? Gray : 
+   assign vga_out = (avg_en == 1'b0) ? Din : 
+                    (avg_en == 1'b1) ? {Din_avg, Din_avg} : 
+   
+   assign R = (Nblank == 1'b1) ? (vga_out) : 
               8'b00000000;
-   assign G = (Nblank == 1'b1) ? Gray : 
+   assign G = (Nblank == 1'b1) ? (vga_out) : 
               8'b00000000;
-   assign B = (Nblank == 1'b1) ? Gray : 
+   assign B = (Nblank == 1'b1) ? (vga_out) : 
               8'b00000000;
    
 endmodule
-

@@ -2,8 +2,10 @@
 //--------------------------------------------------------------------------------------------
 
 
-module ov7670_capture(pclk, vsync, href, d, addr, dout, we);
+module ov7670_capture(pclk, rez_160x120, rez_320x240, vsync, href, d, addr, dout, we);
    input         pclk;
+   input         rez_160x120;
+   input         rez_320x240;
    input         vsync;
    input         href;
    input [7:0]   d;
@@ -56,9 +58,20 @@ module ov7670_capture(pclk, vsync, href, d, addr, dout, we);
             line <= {2{1'b0}};
          end
          else
-            if (href_last[2] == 1'b1)
+            if ((rez_160x120 == 1'b1 & href_last[6] == 1'b1) | (rez_320x240 == 1'b1 & href_last[2] == 1'b1) | (rez_160x120 == 1'b0 & rez_320x240 == 1'b0 & href_last[0] == 1'b1))
             begin
-               if (line[1] == 1'b1)
+               
+               if (rez_160x120 == 1'b1)
+               begin
+                  if (line == 2'b10)
+                     we_reg <= 1'b1;
+               end
+               else if (rez_320x240 == 1'b1)
+               begin
+                  if (line[1] == 1'b1)
+                     we_reg <= 1'b1;
+               end
+               else
                   we_reg <= 1'b1;
                href_last <= {7{1'b0}};
             end
