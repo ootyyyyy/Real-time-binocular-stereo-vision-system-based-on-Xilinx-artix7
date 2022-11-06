@@ -1,1 +1,1 @@
-# Real-time-binocular-stereo-vision-system-based-on-Xilinx-artix7
+# FPGA innovation practice contest
